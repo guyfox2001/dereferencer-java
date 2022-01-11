@@ -12,6 +12,6 @@ out/
 .settings
 .classpath
 .factorypath
-.dereferencer
+
 # Ignore Gradle build output directory
 build
