@@ -24,8 +24,8 @@ import java.util.Map;
 
 public final class FragmentBuilder implements Builder {
 
-    private final Map<Reference, JsonNode> rootFragments;
-    private final Map<JsonNode, JsonNode> nestedFragments;
+    private final Map<Reference, JsonNode> sourceFragments;
+    private final Map<JsonNode, JsonNode> resolveFragments;
     private final JsonNode finalResult;
     private final Reference refOnMainFragment;
     private final ManagerImpl fileManager;
@@ -33,16 +33,16 @@ public final class FragmentBuilder implements Builder {
     public FragmentBuilder(Reference ref) throws URISyntaxException, IOException, InvalidReferenceException {
         fileManager = new ManagerImpl();
         refOnMainFragment = ref;
-        rootFragments = new HashMap<>();
-        nestedFragments = new HashMap<>();
+        sourceFragments = new HashMap<>();
+        resolveFragments = new HashMap<>();
         finalResult = NodeFactoryUtil.getNodeFactory().objectNode();
-        rootFragments.put(refOnMainFragment, executeDocument(refOnMainFragment));
+        sourceFragments.put(refOnMainFragment, executeDocument(refOnMainFragment));
     }
 
     public JsonNode nestFragment(Reference ref) throws URISyntaxException, IOException, InvalidReferenceException {
-        JsonNode key = rootFragments.get(ref), result;
-        if (key == null) { key = executeDocument(ref); rootFragments.put(ref, key); traceDefs(key, key); }
-        result = nestedFragments.get(key);
+        JsonNode key = sourceFragments.get(ref), result;
+        if (key == null) { key = executeDocument(ref); sourceFragments.put(ref, key); traceDefs(key, key); }
+        result = resolveFragments.get(key);
         return result;
     }
 
@@ -73,7 +73,7 @@ public final class FragmentBuilder implements Builder {
                 continue;
             }
             if (ptr.getKey().equals("allOf")){
-                nestedFragment = nestedFragments.get(ptr.getValue());
+                nestedFragment = resolveFragments.get(ptr.getValue());
                 if (nestedFragment != null) {
                     source.setAll((ObjectNode) nestedFragment);
                     continue;
@@ -112,7 +112,7 @@ public final class FragmentBuilder implements Builder {
                 ((ObjectNode)fragment).replace("$ref", new TextNode(ref));
                 if (searched == null) throw new URISyntaxException("The value found by reference " + old +" is null, " +
                         "check if correct link in the " + fileManager.getLastUsedFile().getPath(), "Fragment search error");
-                rootFragments.put(ReferenceFactory.makeReference(ref), searched.without("$anchor"));
+                sourceFragments.put(ReferenceFactory.makeReference(ref), searched.without("$anchor"));
             }
             if (ptr.getValue().isObject()) traceDefs(ptr.getValue(), document);
             if (ptr.getValue().isArray()) {
@@ -123,7 +123,7 @@ public final class FragmentBuilder implements Builder {
 
     @Override
     public JsonNode build() throws URISyntaxException, IOException, InvalidReferenceException, CloneNotSupportedException {
-        JsonNode nonMerged = rootFragments.get(refOnMainFragment);
+        JsonNode nonMerged = sourceFragments.get(refOnMainFragment);
         traceDefs(nonMerged, nonMerged);
         merge((ObjectNode) finalResult, (ObjectNode) nonMerged, refOnMainFragment);
         writeToFile(refOnMainFragment.getFileName());
@@ -189,7 +189,7 @@ public final class FragmentBuilder implements Builder {
         for (JsonNode elem : allOf){
             merge(res, (ObjectNode) elem , instance);
         }
-        nestedFragments.put(allOf, res);
+        resolveFragments.put(allOf, res);
         return res;
     }
     private JsonNode _referenceResolve(Reference ref, Reference instance)
@@ -198,8 +198,8 @@ public final class FragmentBuilder implements Builder {
             InvalidReferenceException,
             CloneNotSupportedException {
 
-        JsonNode res = merge(NodeFactoryUtil.getNodeFactory().objectNode(), (ObjectNode) rootFragments.get(ref), instance);
-        nestedFragments.put(rootFragments.get(ref), res);
+        JsonNode res = merge(NodeFactoryUtil.getNodeFactory().objectNode(), (ObjectNode) sourceFragments.get(ref), instance);
+        resolveFragments.put(sourceFragments.get(ref), res);
         return res;
     }
 }

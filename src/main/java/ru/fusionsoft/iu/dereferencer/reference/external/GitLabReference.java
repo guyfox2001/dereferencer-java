@@ -61,6 +61,7 @@ public class GitLabReference extends GitReference {
                     branch,
                     URI.create(pathToFile).resolve(ref.get()).toString(),
                     true,
+                    ref.getInternal(),
                     accessTOKEN
             );
         } catch (UnsupportedEncodingException e) {
