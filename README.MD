@@ -13,7 +13,7 @@
 
 #### Примеры ссылок и из разыменование
 
-######Локальные ссылки:
+###### Локальные ссылки:
 
 Имеем документ в локальном представлении(“foo.yaml”):
 ``` yaml
@@ -128,7 +128,7 @@ bar:
 **Первая ссылка** заменена содержимым `bar.yaml`.
 **Вторая ссылка** - это результат мёржа ссылок массива `allOf` из файла `bar1.yaml` `first-array-item.yaml` и `second-array-item.yaml`.
 
-######Внутренние ссылки
+###### Внутренние ссылки
 
 Допустим у нас есть некоторый документ `foo.yaml`
 
@@ -170,7 +170,7 @@ foo:
             prop-2: 2
 ```
 
-######Внешние ссылки
+###### Внешние ссылки
 
 Чтобы получить файл со схемой из **GitHub** или **GitLab** необходимо использовать API:
 
@@ -178,9 +178,9 @@ foo:
 
 Для GitLab: `https://gitlab.ru/api/v4/projects/[project_ID]/repository/files/[some_encoded_path]?ref=[branch]` 
 
- ####Использование библиотеки
+ #### Использование библиотеки
  
-Одноимённый класс `Dereferencer` содержит метод getResolve(Reference) в который передаётся ссылка на **source fragment**
+Одноимённый класс `Dereferencer` содержит метод `getResolve(Reference)` в который передаётся ссылка на **source fragment**
 
 ###### GitLab и GitHub взаимодействие
 
@@ -206,7 +206,7 @@ public class Application {
 
 Для взаимодействия с этими сервисами необходимо использовать **токен** доступа только для **приватных репозиториев**.
 
-######Локальные файлы
+###### Локальные файлы
 
 Ссылки на локальные файлы могут быть, как относительными, так и абсолютными
 
@@ -226,11 +226,11 @@ public class Application {
 }
 ```
 
-####Фабрика ссылок 
+#### Фабрика ссылок 
 
 `ReferenceFactory` - это инструмент построения ссылок, в особенности внешних. В примере выше показано, как создаётся локальная ссылка. 
 
-######Построение ссылки на репозиторий GitHub
+###### Построение ссылки на репозиторий GitHub
 
 Можно напрямую вызвать метод, который пострит **`GitHubReference`** `makeGitHubReference(String host, String user, String branch, String repository, String path, String fragment, String TOKEN)`
 , или использовать универсальный метод `makeReference(URI ref, String TOKEN)`.
@@ -251,7 +251,7 @@ public class Application {
 }
 ```
 
-######Построение ссылки на Git Lab
+###### Построение ссылки на Git Lab
 
 Аналогично с предыдущим пунктом можем вызвать два метода для построения **`GitLabReference`**. 
 `makeGitLabReference(String host, Integer projectId, String branch, String path, Boolean raw, String fragment, String TOKEN)`
