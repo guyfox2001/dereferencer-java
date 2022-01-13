@@ -1,6 +1,8 @@
-package ru.fusionsoft.iu.dereferencer.reference;
+package ru.fusionsoft.iu.dereferencer.reference.external;
 
 import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;
+import ru.fusionsoft.iu.dereferencer.factories.ReferenceFactory;
+import ru.fusionsoft.iu.dereferencer.reference.internal.Reference;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -22,7 +24,7 @@ public class GitLabReference extends GitReference {
 
         if (source.getQuery() == null) throw new InvalidReferenceException("Wrong query params.");
 
-        String splitedPath[] = source.getPath().split("/");
+        String[] splitedPath = source.getRawPath().split("/");
 
         if (splitedPath.length < 8) throw new InvalidReferenceException("Wrong endpoint for api");
 
@@ -35,7 +37,9 @@ public class GitLabReference extends GitReference {
             e.printStackTrace();
         }
 
-        String splitedQuery[] = source.getQuery().split("&");
+        fileName = pathToFile.substring(pathToFile.lastIndexOf('/') + 1);
+
+        String[] splitedQuery = source.getQuery().split("&");
 
         for (String it : splitedQuery){
             if (it.contains("ref=")) branch = it.substring(it.lastIndexOf("=") + 1);
@@ -45,11 +49,31 @@ public class GitLabReference extends GitReference {
 
     @Override
     public Reference getRel(String relUri) throws InvalidReferenceException {
-        return super.getRel(relUri);
+        return getRel(ReferenceFactory.makeReference(relUri));
     }
 
-//    @Override
-//    public Reference getRel(Reference ref) throws InvalidReferenceException {
-//        return ReferenceFactory.makeReference();
-//    }
+    @Override
+    public Reference getRel(Reference ref) throws InvalidReferenceException {
+        try {
+            return ReferenceFactory.makeGitLabReference(
+                    reference.getHost(),
+                    projectId,
+                    branch,
+                    URI.create(pathToFile).resolve(ref.get()).toString(),
+                    true,
+                    accessTOKEN
+            );
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
 }

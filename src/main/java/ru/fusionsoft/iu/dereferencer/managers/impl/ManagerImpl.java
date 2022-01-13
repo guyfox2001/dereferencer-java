@@ -1,12 +1,14 @@
 package ru.fusionsoft.iu.dereferencer.managers.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;
 import ru.fusionsoft.iu.dereferencer.managers.Manager;
-import ru.fusionsoft.iu.dereferencer.reference.GitHubReference;
-import ru.fusionsoft.iu.dereferencer.reference.GitReference;
-import ru.fusionsoft.iu.dereferencer.reference.LocalReference;
-import ru.fusionsoft.iu.dereferencer.reference.Reference;
-import ru.fusionsoft.iu.dereferencer.services.GitHubService;
+import ru.fusionsoft.iu.dereferencer.reference.external.GitHubReference;
+import ru.fusionsoft.iu.dereferencer.reference.external.GitLabReference;
+import ru.fusionsoft.iu.dereferencer.reference.external.GitReference;
+import ru.fusionsoft.iu.dereferencer.reference.internal.LocalReference;
+import ru.fusionsoft.iu.dereferencer.reference.internal.Reference;
+import ru.fusionsoft.iu.dereferencer.utils.GitServiceUtil;
 import ru.fusionsoft.iu.dereferencer.utils.MapperUtil;
 
 import java.io.File;
@@ -41,17 +43,10 @@ public class ManagerImpl implements Manager {
     }
 
     @Override
-    public JsonNode getDocument(Reference ref) throws IOException {
-        if (!downloadDirectory.exists()) downloadDirectory.mkdir();
-
+    public JsonNode getDocument(Reference ref) throws IOException, InvalidReferenceException {
+        File downloaded = null;
         lastReference = ref;
-        if (ref instanceof GitHubReference){
-            File downloaded = new File(downloadDirectory +"/" + ((GitHubReference) ref).getHashFileName());
-
-            if (downloaded.exists()) return MapperUtil.getMapperInstance(downloaded).readTree(downloaded);
-
-            return new GitHubService().get((GitReference) ref);
-        }
+        if (!downloadDirectory.exists()) downloadDirectory.mkdir();
 
         if (ref instanceof LocalReference){
             File target = new File(ref.get().toString());
@@ -60,7 +55,17 @@ public class ManagerImpl implements Manager {
                 return MapperUtil.getMapperInstance(target).readTree(target);
             }
         }
-        return null;
+
+        if (ref instanceof GitHubReference){
+            downloaded = new File(downloadDirectory +"/" + ((GitHubReference) ref).getHashFileName());
+        }
+        if(ref instanceof GitLabReference){
+            downloaded = new File(downloadDirectory +"/" + ((GitLabReference) ref).getHashFileName());
+        }
+
+
+        if (downloaded.exists()) return MapperUtil.getMapperInstance(downloaded).readTree(downloaded);
+        return GitServiceUtil.getGitService((GitReference) ref).get((GitReference) ref);
     }
 
     @Override

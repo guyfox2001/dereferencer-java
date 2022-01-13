@@ -5,6 +5,7 @@ build/
 target/
 out/
 .idea
+iuData/
 *.iml
 *.ipr
 *.iws

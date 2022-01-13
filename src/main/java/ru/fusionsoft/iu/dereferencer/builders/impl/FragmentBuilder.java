@@ -10,7 +10,7 @@ import ru.fusionsoft.iu.dereferencer.enums.RefType;
 import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;
 import ru.fusionsoft.iu.dereferencer.factories.ReferenceFactory;
 import ru.fusionsoft.iu.dereferencer.managers.impl.ManagerImpl;
-import ru.fusionsoft.iu.dereferencer.reference.Reference;
+import ru.fusionsoft.iu.dereferencer.reference.internal.Reference;
 import ru.fusionsoft.iu.dereferencer.utils.MapperUtil;
 import ru.fusionsoft.iu.dereferencer.utils.NodeFactoryUtil;
 
@@ -62,7 +62,6 @@ public final class FragmentBuilder implements Builder {
 
                 if (!RefType.isInternalPath(ref.get()) && !RefType.isInternalAnchor(ref.get())) {
                     ref = instance.getRel(ref);
-                    //instance = ReferenceFactory.copy(ref);
                     instance = (Reference) ref.clone();
                 }
 

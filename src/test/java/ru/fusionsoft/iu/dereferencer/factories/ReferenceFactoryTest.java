@@ -2,8 +2,8 @@ package ru.fusionsoft.iu.dereferencer.factories;
 
 import org.junit.jupiter.api.Test;
 import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;
-import ru.fusionsoft.iu.dereferencer.reference.LocalReference;
-import ru.fusionsoft.iu.dereferencer.reference.Reference;
+import ru.fusionsoft.iu.dereferencer.reference.internal.LocalReference;
+import ru.fusionsoft.iu.dereferencer.reference.internal.Reference;
 
 import java.net.URI;
 

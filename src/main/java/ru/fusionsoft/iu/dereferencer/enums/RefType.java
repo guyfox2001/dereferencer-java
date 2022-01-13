@@ -12,25 +12,7 @@ import java.net.URI;
 * */
 public enum RefType {
     EXTERNAL_DOCUMENT_ANCHOR, EXTERNAL_DOCUMENT_PATH, EXTERNAL_DOCUMENT, LOCAL_DOCUMENT_ANCHOR, LOCAL_DOCUMENT, LOCAL_DOCUMENT_PATH, INTERNAL_ANCHOR, INTERNAL_PATH, UNDEF_REF;
-    @Override
-    public String toString() {
-        switch (this){
-            case LOCAL_DOCUMENT:
-                return "LOCAL_DOCUMENT";
-            case EXTERNAL_DOCUMENT:
-                return "EXTERNAL_DOCUMENT";
-            case LOCAL_DOCUMENT_ANCHOR:
-                return "LOCAL_FRAGMENT";
-            case UNDEF_REF:
-                return "UNDEF_REF";
-            case EXTERNAL_DOCUMENT_ANCHOR:
-                return "EXTERNAL_FRAGMENT";
-            case INTERNAL_ANCHOR:
-                return "INTERNAL_FRAGMENT";
-            default:
-                return null;
-        }
-    }
+
     public static RefType checkFragmentType(URI uri){
         if (uri.getScheme() != null && uri.getScheme().length() != 1) {
             if (uri.getFragment() != null ) {
@@ -80,6 +62,10 @@ public enum RefType {
         return true;
     }
 
+    public static boolean isGitLab(URI expecting){
+        if (!expecting.getHost().contains("gitlab")) return false;
+        return true;
+    }
 
 
     /*public static boolean isExternalAnchor(URI expecting)*/

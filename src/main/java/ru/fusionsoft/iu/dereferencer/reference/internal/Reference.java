@@ -1,4 +1,4 @@
-package ru.fusionsoft.iu.dereferencer.reference;
+package ru.fusionsoft.iu.dereferencer.reference.internal;
 
 import ru.fusionsoft.iu.dereferencer.enums.RefType;
 import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;

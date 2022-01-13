@@ -1,7 +1,8 @@
-package ru.fusionsoft.iu.dereferencer.reference;
+package ru.fusionsoft.iu.dereferencer.reference.external;
 
 import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;
 import ru.fusionsoft.iu.dereferencer.factories.ReferenceFactory;
+import ru.fusionsoft.iu.dereferencer.reference.internal.Reference;
 
 import java.net.URI;
 
@@ -18,13 +19,11 @@ public class GitHubReference extends GitReference {
             throw new InvalidReferenceException("The host is specified incorrectly.");
         if (!reference.getScheme().equals("https"))
             throw new InvalidReferenceException("The scheme is specified incorrectly");
-//        _parceUri(source);
-
     }
 
     @Override
     protected void _parceUri(URI source) throws InvalidReferenceException {
-        String splited[] =  source.getPath().split("/");
+        String[] splited =  source.getPath().split("/");
 
         if (splited.length < 5)
             throw new InvalidReferenceException("Wrong endpoint for api");
