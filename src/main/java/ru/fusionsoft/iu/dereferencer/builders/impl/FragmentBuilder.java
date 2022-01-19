@@ -60,7 +60,7 @@ public final class FragmentBuilder implements Builder {
             if (ptr.getKey().equals("$ref")){
                 ref = ReferenceFactory.makeReference(URI.create(ptr.getValue().asText()));
 
-                if (!RefType.isInternalPath(ref.get()) && !RefType.isInternalAnchor(ref.get())) {
+                if (!RefType.isInternalPath(ref.getUri()) && !RefType.isInternalAnchor(ref.getUri())) {
                     ref = instance.getRel(ref);
                     instance = (Reference) ref.clone();
                 }

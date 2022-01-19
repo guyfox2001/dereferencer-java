@@ -49,7 +49,7 @@ public class GitHubReference extends GitReference {
 
     @Override
     public Reference getRel(Reference ref) throws InvalidReferenceException {
-        return ReferenceFactory.makeReference(super.getRel(ref).get(), accessTOKEN);
+        return ReferenceFactory.makeReference(super.getRel(ref).getUri(), accessTOKEN);
     }
 
     public String getUser() {

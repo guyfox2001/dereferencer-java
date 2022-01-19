@@ -49,7 +49,7 @@ public class ManagerImpl implements Manager {
         if (!downloadDirectory.exists()) downloadDirectory.mkdir();
 
         if (ref instanceof LocalReference){
-            File target = new File(ref.get().toString());
+            File target = new File(ref.getUri().toString());
             if (target.exists()) {
                 lastUsed = target;
                 return MapperUtil.getMapperInstance(target).readTree(target);

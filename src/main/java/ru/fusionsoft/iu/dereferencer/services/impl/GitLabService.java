@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;
 import ru.fusionsoft.iu.dereferencer.managers.impl.ManagerImpl;
 import ru.fusionsoft.iu.dereferencer.reference.external.GitLabReference;
 import ru.fusionsoft.iu.dereferencer.reference.external.GitReference;
@@ -25,7 +24,7 @@ public class GitLabService implements GitService {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .addHeader("PRIVATE-TOKEN", targetCast.getAccessTOKEN())
-                .url(targetCast.get().toString())
+                .url(targetCast.getUri().toString())
                 .build();
         Response response = client.newCall(request).execute();
 

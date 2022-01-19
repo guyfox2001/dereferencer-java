@@ -26,7 +26,7 @@ public class GitHubService implements GitService {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .addHeader("Authorization", "token " + targetCast.getAccessTOKEN())
-                .url(targetCast.get().toURL())
+                .url(targetCast.getUri().toURL())
                 .build();
         Response response = client.newCall(request).execute();
 

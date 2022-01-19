@@ -1,22 +1,121 @@
 # **Dereferencer**
 
-#### Что и для чего :)
+## Что и для чего :)
+Dereferencer - это библиотека, предназначенная для разыменования ссылок **JSON/YAML Schema**, отмеченных кейвордом **`$ref`**. 
+Ключевое слово **`$ref`** — это аппликатор, который используется для ссылки на статически идентифицированную схему.
 
-Данная библиотека библиотека предоставляет функционал, позволяющий разрешать ссылки в файлах формата **_JSON-Schema Document_**. 
-Ключевое слово **"$ref"** — это аппликатор, который используется для ссылки на статически идентифицированную схему. Все референсы на другую схему составляются в соответствии с [RFC 2396: Uniform Resource Identifiers (URI): Generic Syntax](https://www.ietf.org/rfc/rfc2396.txt).
+Для работы с JSON/YAML файлами была использована библиотека [Jackson API](https://github.com/FasterXML/jackson.git)
 
-`Hierarchical URI  example:
-    [scheme:][//authority][/path][?query][#fragment]
-`
 
-Стоит так же отметить, что для указания **"internal"** ссылок можно использовать ключевое слово **"$anchor"** или же прибегнуть к использованию [JSON Pointer](https://datatracker.ietf.org/doc/html/rfc6901#section-6)
+## Описание основных объектов взаимодействия:
 
-#### Примеры ссылок и из разыменование
+### Public class Dereferencer
 
-###### Локальные ссылки:
+Это основной класс, имеющий один метод. Возвращаемая `JsonNode` - это статическая **Json/Yaml Schema Document**,
+в которую помещено содержимое других схем, ссылемых с помощью ключевого слова **`$ref`**.
+ 
+
+|Return Value| Modificator |Method |
+|:-----------------------:|:-----------------------:| ----------------------- |
+|`JsonNode`| `public` | `static JsonNode getResolve(Reference ref)` |
+
+Входной параметр это экземпляр класса `Reference`. 
+
+### Ссылки
+
+#### Public abstract class Reference
+
+Это клас родитель являющийся отображением ссылок,написанных относительно стандарта: [RFC 2396: Uniform Resource Identifiers (URI): Generic Syntax](https://www.ietf.org/rfc/rfc2396.txt) 
+
+**Hierarchical URI  example:** `[scheme:][//authority][/path][?query][#fragment]`
+
+|Modificator| Type | Member|
+|:------------:|:------------:| :----------|
+|`protected`|`URI`   |`reference`|
+|`protected`|`String`|`jsonRelPointerPath`|
+|`protected`|`String`|`anchor`|
+|`protected`|`String`|`fileName`|
+
+|Modificator|Constructors|
+|:------------:| :----------|
+| `public` | `Reference(URI source)` |
+
+
+|Modificator | Return Value|Method | Description|
+|:-----------------------:|:-----------------------:| ----------------------- | :----------------------- |
+|`protected`|  `void`      | `_parceUri(URI source)`           | Разбирает входной `URI`, извлекая необходимые значения|
+|`public`   |  `URI`       | `getUri()`                        | Возвращает экземпляр класса `URI`
+|`public`   |  `String`    | `getInternal()`                   | Возвращает `#uri-fragment` типа `String`
+|`public`   |  `URI`       | `getInternalUri()`                | Возвращает `#uri-fragment` типа `URI`|
+|`public`   |  `String`    | `getFileName()`                   | Возвращает имя файла, в котором находится **`JSON/YAML Schema Document`**|
+|`public`   |  `Reference` | `getRel(String relativeUriString)`| Возвращает новый экземпляр класса `Reference`. Входной параметр: строка `relativeStringUri`, являющаяся относительной ссылкой на другой `JSON/YAML Schema Document`| 
+|`public`   |  `Reference` | `getRel(Reference relativeRef)`   | Возвращает новый экземпляр класса `Reference`. Входной параметр: экземпляр класса `Reference` `relativeRef`, являющаяся относительной ссылкой на другой `JSON/YAML Schema Document`| 
+
+#### Public class LocalReference
+
+Наследник класса `Reference`, являющийся отображением ссылка на документы, расположенные локально (непсоредственно на физической машине).
+Стоит так же отметить, что для указания ссылок на `#fragment` можно использовать ключевое слово **`$anchor`** или же использовать [JSON Pointer](https://datatracker.ietf.org/doc/html/rfc6901#section-6)
+
+**Примеры**:
+```
+    W://some/Absolute/path/to/file.yaml
+    /some/path/relative/from/root/to/file.yaml#/with/json/pointer
+    ../relative/path/file.yaml#withAnchor    
+```
+
+|Modificator|Constructors|
+|:------------:| :----------|
+| `public` | `Reference(URI source)` |
+
+
+|Overrided |Modificator | Return Value |Method | Description|
+|:-----------------------:|:-----------------------:|:-----------------------:| ----------------------- | :----------------------- |
+| + |`protected`|  `void`      | `_parceUri(URI source)`           | Разбирает входной `URI`, извлекая необходимые значения|
+| - |`public`   |  `URI`       | `getUri()`                        | Возвращает экземпляр класса `URI`
+| - |`public`   |  `String`    | `getInternal()`                   | Возвращает `#uri-fragment` типа `String`
+| - |`public`   |  `URI`       | `getInternalUri()`                | Возвращает `#uri-fragment` типа `URI`|
+| - |`public`   |  `String`    | `getFileName()`                   | Возвращает имя файла, в котором находится **`JSON/YAML Schema Document`**|
+| + |`public`   |  `Reference` | `getRel(String relativeUriString)`| Возвращает новый экземпляр класса `Reference`. Входной параметр: строка `relativeStringUri`, являющаяся относительной ссылкой на другой `JSON/YAML Schema Document`| 
+| + |`public`   |  `Reference` | `getRel(Reference relativeRef)`   | Возвращает новый экземпляр класса `Reference`. Входной параметр: экземпляр класса `Reference` `relativeRef`, являющаяся относительной ссылкой на другой `JSON/YAML Schema Document`| 
+
+#### Public abstract class GitReference
+
+Наследник класса `LocalReference`, являющийся отображением внешних ссылок для Git-сервисов.
+
+|Modificator| Type | Member|
+|:------------:|:------------:| :----------|
+|`protected`|`String`|`accessTOKEN`|
+|`protected`|`String`|`pathToFile`|
+|`protected`|`String`|`hashFileName`|
+
+**Note!**. Для получения доступа к приватному репозиторию необходимо использовать `Access Token`. 
+
+|Modificator|Constructors|
+|:------------:| :----------|
+| `public` | `Reference(URI source)` |
+| `public` | `Reference(URI source, String TOKEN)` |
+
+
+|Overrided |Modificator | Return Value |Method | Description|
+|:-----------------------:|:-----------------------:|:-----------------------:| ----------------------- | :----------------------- |
+| - |`protected`|  `void`      | `_parceUri(URI source)`           | Разбирает входной `URI`, извлекая необходимые значения|
+| - |`public`   |  `URI`       | `getUri()`                        | Возвращает экземпляр класса `URI`
+| - |`public`   |  `String`    | `getInternal()`                   | Возвращает `#uri-fragment` типа `String`
+| - |`public`   |  `URI`       | `getInternalUri()`                | Возвращает `#uri-fragment` типа `URI`|
+| - |`public`   |  `String`    | `getFileName()`                   | Возвращает имя файла, в котором находится **`JSON/YAML Schema Document`**|
+| - |`public`   |  `Reference` | `getRel(String relativeUriString)`| Возвращает новый экземпляр класса `Reference`. Входной параметр: строка `relativeStringUri`, являющаяся относительной ссылкой на другой `JSON/YAML Schema Document`| 
+| - |`public`   |  `Reference` | `getRel(Reference relativeRef)`   | Возвращает новый экземпляр класса `Reference`. Входной параметр: экземпляр класса `Reference` `relativeRef`, являющаяся относительной ссылкой на другой `JSON/YAML Schema Document`| 
+| - |`public`   |  `String`    | `getAccesTOKEN()`                 | Возвращает `accesTOKEN`|
+| - |`public`   |  `String`    | `setAccesTOKEN(String Token)`     | Устанавливает `accesTOKEN = Token`|
+| - |`public`   |  `String`    | `getPathToFile()`                 | Возвращает относительный путь до файла внутри репозитория. См.далее `GitLabReference` и `GitHubReference`|
+| - |`public`   |  `String`    | `getHashFileName()`               | Возвращает имя файла, являющееся результатом хеширования ссылки методом `MD5`|
+
+## Примеры ссылок и их разыменование
+
+### Локальные ссылки:
 
 Имеем документ в локальном представлении(“foo.yaml”):
-``` yaml
+```yaml
 foo:
  $ref: "foo/bar.yaml"
 bar:
@@ -128,7 +227,7 @@ bar:
 **Первая ссылка** заменена содержимым `bar.yaml`.
 **Вторая ссылка** - это результат мёржа ссылок массива `allOf` из файла `bar1.yaml` `first-array-item.yaml` и `second-array-item.yaml`.
 
-###### Внутренние ссылки
+### Внутренние ссылки
 
 Допустим у нас есть некоторый документ `foo.yaml`
 
@@ -170,104 +269,12 @@ foo:
             prop-2: 2
 ```
 
-###### Внешние ссылки
+### Внешние ссылки
 
-Чтобы получить файл со схемой из **GitHub** или **GitLab** необходимо использовать API:
+Чтобы получить файл со схемой из **GitHub** или **GitLab** необходимо использовать API этих сервисов:
 
 Для GitHub: `https://raw.githubusercontent.com/[user]/[repos_name]/[branch]/[some_path]` 
 
-Для GitLab: `https://gitlab.ru/api/v4/projects/[project_ID]/repository/files/[some_encoded_path]?ref=[branch]` 
+Для GitLab: `https://gitlab.ru/api/v4/projects/[project_ID]/repository/files/[some_encoded_path]/raw?ref=[branch]`
+  
 
- #### Использование библиотеки
- 
-Одноимённый класс `Dereferencer` содержит метод `getResolve(Reference)` в который передаётся ссылка на **source fragment**
-
-###### GitLab и GitHub взаимодействие
-
-```java
-public class Application {
-    public static void main(String[] args) throws InvalidReferenceException, IOException, URISyntaxException, CloneNotSupportedException {
-        Dereferencer.getResolve(new GitLabReference(
-                URI.create("https://gitlab.fusionsoft.ru/api/v4/projects/27/repository/files/iuData%2fSample-univ%2fNomenclature%2eyaml/raw?ref=master"),
-                "MJ8hcszC654epjgXs_4i"));
-    }
-}
-```
-
-```java
-public class Application {
-    public static void main(String[] args) throws InvalidReferenceException, IOException, URISyntaxException, CloneNotSupportedException {
-        Dereferencer.getResolve(new GitHubReference(
-                URI.create("https://raw.githubusercontent.com/guyfox2001/dataHolder/main/Nomenclature.yaml"),
-                "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"));
-    }
-}
-```
-
-Для взаимодействия с этими сервисами необходимо использовать **токен** доступа только для **приватных репозиториев**.
-
-###### Локальные файлы
-
-Ссылки на локальные файлы могут быть, как относительными, так и абсолютными
-
-```java
-public class Application {
-    public static void main(String[] args) throws InvalidReferenceException, IOException, URISyntaxException, CloneNotSupportedException {
-        Dereferencer.getResolve(ReferenceFactory.makeReference(URI.create("iuData/Sample-univ/Nomenclature.yaml")));
-    }
-}
-```
-
-```java
-public class Application {
-    public static void main(String[] args) throws InvalidReferenceException, IOException, URISyntaxException, CloneNotSupportedException {
-        Dereferencer.getResolve(ReferenceFactory.makeReference(URI.create("W://dereferencer/iuData/Sample-univ/Nomenclature.yaml")));
-    }
-}
-```
-
-#### Фабрика ссылок 
-
-`ReferenceFactory` - это инструмент построения ссылок, в особенности внешних. В примере выше показано, как создаётся локальная ссылка. 
-
-###### Построение ссылки на репозиторий GitHub
-
-Можно напрямую вызвать метод, который пострит **`GitHubReference`** `makeGitHubReference(String host, String user, String branch, String repository, String path, String fragment, String TOKEN)`
-, или использовать универсальный метод `makeReference(URI ref, String TOKEN)`.
-
-```java
-public class Application {
-    public static void main(String[] args) throws InvalidReferenceException, IOException, URISyntaxException, CloneNotSupportedException {
-        GitReference ref = ReferenceFactory.makeGitHubReference(
-            "someHost",
-            "someUser",
-            "someBranch",
-            "someRepos",
-            "somePathToFileOnRepos",
-            "some #fragment",
-            "someTOKEN"
-        );
-    }
-}
-```
-
-###### Построение ссылки на Git Lab
-
-Аналогично с предыдущим пунктом можем вызвать два метода для построения **`GitLabReference`**. 
-`makeGitLabReference(String host, Integer projectId, String branch, String path, Boolean raw, String fragment, String TOKEN)`
-
-```java
-    public class Application {
-        public static void main(String[] args) throws InvalidReferenceException, IOException, URISyntaxException, CloneNotSupportedException {
-            GitReference ref = ReferenceFactory.makeGitLabReference(
-                "someHost",
-                27, //projectID
-                "someBranch",
-                "somePathToFileOnRepos",
-                true,
-                "some #fragment",
-                "someTOKEN"
-            );
-        }
-    }
-```

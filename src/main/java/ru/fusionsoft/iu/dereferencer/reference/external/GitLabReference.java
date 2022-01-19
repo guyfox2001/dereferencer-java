@@ -59,7 +59,7 @@ public class GitLabReference extends GitReference {
                     reference.getHost(),
                     projectId,
                     branch,
-                    URI.create(pathToFile).resolve(ref.get()).toString(),
+                    URI.create(pathToFile).resolve(ref.getUri()).toString(),
                     true,
                     ref.getInternal(),
                     accessTOKEN

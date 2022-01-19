@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public abstract class Reference implements Cloneable {
 
-    protected URI reference;
+    protected URI    reference;
     protected String jsonRelPointerPath = "";
     protected String anchor = "";
     protected String fileName = "";
@@ -26,7 +26,7 @@ public abstract class Reference implements Cloneable {
 
     }
 
-    public URI get(){
+    public URI getUri(){
         return reference;
     }
 

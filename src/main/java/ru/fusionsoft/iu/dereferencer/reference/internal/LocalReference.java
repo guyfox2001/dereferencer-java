@@ -25,7 +25,7 @@ public class LocalReference extends Reference {
 
     @Override
     public Reference getRel(Reference ref) throws InvalidReferenceException {
-        return new LocalReference(reference.resolve(ref.get()));
+        return new LocalReference(reference.resolve(ref.getUri()));
     }
 
 }
