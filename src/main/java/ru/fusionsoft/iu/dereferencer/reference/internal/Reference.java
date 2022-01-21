@@ -6,7 +6,7 @@ import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;
 import java.net.URI;
 import java.util.Objects;
 
-public abstract class Reference implements Cloneable {
+public abstract class Reference implements Cloneable{
 
     protected URI    reference;
     protected String jsonRelPointerPath = "";
