@@ -2,7 +2,7 @@
 1. [Dereferencer](#dereferencer)
     1. [GitHub API](#для-github)
     2. [GitLab API](#для-gitlab)
-2. [Основное взаимодействие](#описание-основных-объектов-взаимодействия)
+2. [How to use](#описание-основных-объектов-взаимодействия)
     1. [Основоной класс](#основоной-класс-библиотеки)
     2. [Ссылки](#ссылки)
         1. [Reference](#reference)
@@ -10,6 +10,7 @@
         3. [GitReference](#gitreference)
         5. [GitHubReference](#githubreference)
         6. [GitLabReference](#gitlabreference)
+    3. [Фабрика ссылок](#фабрика-ссылок)
 
 
 
@@ -37,7 +38,7 @@ Dereferencer - это библиотека, предназначенная дл�
 Для работы с JSON/YAML файлами была использована библиотека [Jackson API](https://github.com/FasterXML/jackson.git)
 
 
-## Описание основных объектов взаимодействия:
+## How to use:
 
 ### Основной класс библиотеки
 Объявление: `public class Dereferencer`
@@ -95,7 +96,7 @@ Dereferencer - это библиотека, предназначенная дл�
 #### LocalReference
 
 Наследник класса `Reference`, являющийся отображением ссылка на документы, расположенные локально (непсоредственно на физической машине).
-Стоит так же отметить, что для указания ссылок на `#fragment` можно использовать ключевое слово **`$anchor`** или же использовать [JSON Pointer](https://datatracker.ietf.org/doc/html/rfc6901#section-6)
+Стоит так же отметить, что для указания ссылок на **`#fragment`** можно использовать ключевое слово **`$anchor`** или же использовать [JSON Pointer](https://datatracker.ietf.org/doc/html/rfc6901#section-6)
 
 Объявление: `public class LocalReference extends Reference`
 
@@ -108,7 +109,7 @@ Dereferencer - это библиотека, предназначенная дл�
 
 |Modificator|Constructors|
 |:------------:| :----------|
-| `public` | `Reference(URI source)` |
+| `public` | `LocalReference(URI source)` |
 
 
 |Overrided |Modificator | Return Value |Method | Description|
@@ -125,6 +126,8 @@ Dereferencer - это библиотека, предназначенная дл�
 
 Наследник класса `LocalReference`, являющийся отображением внешних ссылок для Git-сервисов.
 
+Объявление: `public abstract class GitReference extends LocalReference`
+
 |Modificator| Type | Member|
 |:------------:|:------------:| :----------|
 |`protected`|`String`|`accessTOKEN`|
@@ -135,8 +138,8 @@ Dereferencer - это библиотека, предназначенная дл�
 
 |Modificator|Constructors|
 |:------------:| :----------|
-| `public` | `Reference(URI source)` |
-| `public` | `Reference(URI source, String TOKEN)` |
+| `public` | `GitReference(URI source)` |
+| `public` | `GitReference(URI source, String TOKEN)` |
 
 
 |Overrided |Modificator | Return Value |Method | Description|
@@ -157,6 +160,83 @@ Dereferencer - это библиотека, предназначенная дл�
 
 Наследник `GitReference`. Это отображение формата ссылок, используемых в [GitHub API](#для-github).
 
+|Modificator| Type | Member|
+|:------------:|:------------:| :----------|
+|`protected`|`String`|`user`|
+|`protected`|`String`|`branch`|
+|`protected`|`String`|`repo`|
+
+
+|Modificator|Constructors|
+|:------------:| :----------|
+| `public` | `GitHubReference(URI source)` |
+| `public` | `GitHubReference(URI source, String TOKEN)` |
+
+
+|Overrided |Modificator | Return Value |Method | Description|
+|:-----------------------:|:-----------------------:|:-----------------------:| ----------------------- | :----------------------- |
+| + |`protected`|  `void`      | `_parceUri(URI source)`           | Разбирает входной `URI`, извлекая необходимые значения|
+| - |`public`   |  `URI`       | `getUri()`                        | Возвращает экземпляр класса `URI`
+| - |`public`   |  `String`    | `getInternal()`                   | Возвращает `#uri-fragment` типа `String`
+| - |`public`   |  `URI`       | `getInternalUri()`                | Возвращает `#uri-fragment` типа `URI`|
+| - |`public`   |  `String`    | `getFileName()`                   | Возвращает имя файла, в котором находится **`JSON/YAML Schema Document`**|
+| + |`public`   |  `Reference` | `getRel(String relativeUriString)`| Возвращает новый экземпляр класса `Reference`. Входной параметр: строка `relativeStringUri`, являющаяся относительной ссылкой на другой `JSON/YAML Schema Document`| 
+| + |`public`   |  `Reference` | `getRel(Reference relativeRef)`   | Возвращает новый экземпляр класса `Reference`. Входной параметр: экземпляр класса `Reference` `relativeRef`, являющаяся относительной ссылкой на другой `JSON/YAML Schema Document`| 
+| - |`public`   |  `String`    | `getAccesTOKEN()`                 | Возвращает `accesTOKEN`|
+| - |`public`   |  `String`    | `setAccesTOKEN(String Token)`     | Устанавливает `accesTOKEN = Token`|
+| - |`public`   |  `String`    | `getPathToFile()`                 | Возвращает относительный путь до файла внутри репозитория. См.далее `GitLabReference` и `GitHubReference`|
+| - |`public`   |  `String`    | `getHashFileName()`               | Возвращает имя файла, являющееся результатом хеширования ссылки методом `MD5`|
+| - |`public`   |  `String`    | `getUser()`                       | Возвращает имя пользователя, которому принадлежит данный репозиторий|
+| - |`public`   |  `String`    | `getRepo()`                       | Возвращает название репозитория|
+| - |`public`   |  `String`    | `getBranch()`                     | Возвращает ветку, указанную в ссылке|
+
+#### GitLabReference
+
+Наследник `GitReference`. Это отображение формата ссылок, используемых в [GitLab API](#для-gitlab).
+
+|Modificator| Type | Member|
+|:------------:|:------------:| :----------|
+|`protected`|`String` |`pathToFileEncoded`|
+|`protected`|`String` |`branch`|
+|`protected`|`Integer`|`projectID`|
+
+
+|Modificator|Constructors|
+|:------------:| :----------|
+| `public` | `GitHubReference(URI source)` |
+| `public` | `GitHubReference(URI source, String TOKEN)` |
+
+
+|Overrided |Modificator | Return Value |Method | Description|
+|:-----------------------:|:-----------------------:|:-----------------------:| ----------------------- | :----------------------- |
+| + |`protected`|  `void`      | `_parceUri(URI source)`           | Разбирает входной `URI`, извлекая необходимые значения|
+| - |`public`   |  `URI`       | `getUri()`                        | Возвращает экземпляр класса `URI`
+| - |`public`   |  `String`    | `getInternal()`                   | Возвращает `#uri-fragment` типа `String`
+| - |`public`   |  `URI`       | `getInternalUri()`                | Возвращает `#uri-fragment` типа `URI`|
+| - |`public`   |  `String`    | `getFileName()`                   | Возвращает имя файла, в котором находится **`JSON/YAML Schema Document`**|
+| + |`public`   |  `Reference` | `getRel(String relativeUriString)`| Возвращает новый экземпляр класса `Reference`. Входной параметр: строка `relativeStringUri`, являющаяся относительной ссылкой на другой `JSON/YAML Schema Document`| 
+| + |`public`   |  `Reference` | `getRel(Reference relativeRef)`   | Возвращает новый экземпляр класса `Reference`. Входной параметр: экземпляр класса `Reference` `relativeRef`, являющаяся относительной ссылкой на другой `JSON/YAML Schema Document`| 
+| - |`public`   |  `String`    | `getAccesTOKEN()`                 | Возвращает `accesTOKEN`|
+| - |`public`   |  `String`    | `setAccesTOKEN(String Token)`     | Устанавливает `accesTOKEN = Token`|
+| - |`public`   |  `String`    | `getPathToFile()`                 | Возвращает относительный путь до файла внутри репозитория. См.далее `GitLabReference` и `GitHubReference`|
+| - |`public`   |  `String`    | `getHashFileName()`               | Возвращает имя файла, являющееся результатом хеширования ссылки методом `MD5`|
+| - |`public`   |  `Integer`   | `getProjectId()`                  | Возвращает `ID` проекта (репзитория) |
+| - |`public`   |  `String`    | `getBranch()`                     | Возвращает ветку, указанную в ссылке|
+
+### Фабрика ссылок 
+
+Это функциональный класс, содержащий в себе статические методы, которые создают экземпляр необходимой ссылки.
+
+Объявление: `public class ReferenceFactory`
+
+|Modificator | Return Value|Method | Description|
+|:-----------------------:|:-----------------------:| ----------------------- | :----------------------- |
+|`public`| `GitLabReference` | `makeGitLabReference(String host, Integer projectId, String branch, String path, Boolean raw, String fragment, String TOKEN)` | Создаёт экземпляр `GitLabReference`, `host` - это хост репозитория `GitLab` (может быть корпоративный); default: `gitlab.ru`, `projectID` - ID проекта , `branch` - целевая ветка, `path` - путь внутри репозитория, `fragment` - путь внутри документа, `TOKEN` - токен доступа|
+|`public`| `GitHubReference` | `makeGitHubReference(String host, String user, String branch, String repository, String path, String fragment, String TOKEN)` | Создаёт экземпляр `GitHubReference`, `host` - это хост репозитория `GitHub` (может быть корпоративный); default: `raw.githubusercontent.com`, `repo` - репозиторий в котором находится документ, `user` - это владаелец репозитория, `branch` - целевая ветка, `path` - путь внутри репозитория, `fragment` - путь внутри документа, `TOKEN` - токен доступа|
+|`public`| `Reference`       | `makeReference(String ref)`                                                                                                   | Создаёт экземпляр `Reference` не явно, если это ссылка на GitHub/Gitlab, то токен будет пустой строкой|
+|`public`| `Reference`       | `makeReference(String ref, String TOKEN)`                                                                                     | Создаёт экземпляр `GitReference`.|
+|`public`| `Reference`       | `makeReference(URI source)`                                                                                                   | Создаёт экземпляр `Reference` не явно, если это ссылка на GitHub/Gitlab, то токен будет пустой строкой|
+|`public`| `Reference`       | `makeReference(URI source, String TOKEN)`                                                                                     | Создаёт экземпляр `GitReference`.|
 
 ## Примеры ссылок и их разыменование
 

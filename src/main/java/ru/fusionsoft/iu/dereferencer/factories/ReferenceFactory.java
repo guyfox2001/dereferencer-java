@@ -18,7 +18,7 @@ public class ReferenceFactory {
     public static GitLabReference makeGitLabReference(String host, Integer projectId, String branch, String path, Boolean raw, String fragment, String TOKEN) throws
             UnsupportedEncodingException, InvalidReferenceException {
         if (projectId == null || branch == null || path == null || branch.equals("") || path.equals("")) throw new NullPointerException();
-        if (host.equals("")) host = "https://gitlab.ru";
+        if (host.equals("")) host = "gitlab.ru";
         String uri = "https://" + host +"/api/v4/projects/" + projectId + "/repository/files/" + URLEncoder.encode(path, StandardCharsets.UTF_8.name());
         if (raw) uri+= "/raw";
         uri += "?ref=" + branch;
@@ -30,9 +30,9 @@ public class ReferenceFactory {
             throws InvalidReferenceException {
         if (user == null || branch == null || repository == null || path == null) throw new NullPointerException();
 
-        if(host.equals("")) host = "https://raw.githubusercontent.com";
+        if(host.equals("")) host = "raw.githubusercontent.com";
 
-        String uri  = host + "/" + user + "/" + repository + "/" + branch + "/" + path;
+        String uri  ="https://" + host + "/" + user + "/" + repository + "/" + branch + "/" + path;
         if (!fragment.equals("")) uri += "#" + fragment;
 
         return new GitHubReference(URI.create(uri), TOKEN);
