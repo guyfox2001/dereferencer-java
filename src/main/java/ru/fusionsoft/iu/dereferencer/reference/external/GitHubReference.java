@@ -8,9 +8,9 @@ import java.net.URI;
 
 public class GitHubReference extends GitReference {
 
-    protected String user = "";
-    protected String repo = "";
-    protected String branch = "";
+    protected String user;
+    protected String repo;
+    protected String branch;
 
 
     public GitHubReference(URI source, String TOKEN) throws InvalidReferenceException {
@@ -49,6 +49,7 @@ public class GitHubReference extends GitReference {
 
     @Override
     public Reference getRel(Reference ref) throws InvalidReferenceException {
+        if (ref.getUri().isAbsolute()) return ReferenceFactory.makeReference(super.getRel(ref).getUri(), null);
         return ReferenceFactory.makeReference(super.getRel(ref).getUri(), accessTOKEN);
     }
 

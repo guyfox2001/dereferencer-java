@@ -3,6 +3,7 @@ package ru.fusionsoft.iu.dereferencer.services.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import ru.fusionsoft.iu.dereferencer.managers.impl.ManagerImpl;
 import ru.fusionsoft.iu.dereferencer.reference.external.GitHubReference;
@@ -25,9 +26,12 @@ public class GitHubService implements GitService {
         GitHubReference targetCast = (GitHubReference) target;
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .addHeader("Authorization", "token " + targetCast.getAccessTOKEN())
                 .url(targetCast.getUri().toURL())
                 .build();
+        if(target.getAccessTOKEN() != null && !target.getAccessTOKEN().equals("") ){
+            new Request.Builder(request).addHeader("Authorization", "token " + targetCast.getAccessTOKEN());
+        }
+
         Response response = client.newCall(request).execute();
 
         if (response.code() == 404) {

@@ -30,7 +30,7 @@ public final class FragmentBuilder implements Builder {
     private final Reference refOnMainFragment;
     private final ManagerImpl fileManager;
 
-    public FragmentBuilder(Reference ref) throws URISyntaxException, IOException, InvalidReferenceException {
+    public FragmentBuilder(Reference ref) throws IOException, InvalidReferenceException {
         fileManager = new ManagerImpl();
         refOnMainFragment = ref;
         sourceFragments = new HashMap<>();

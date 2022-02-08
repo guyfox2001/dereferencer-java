@@ -54,13 +54,14 @@ public class GitLabReference extends GitReference {
 
     @Override
     public Reference getRel(Reference ref) throws InvalidReferenceException {
+        if(ref.getUri().isAbsolute()) return ReferenceFactory.makeReference(ref.getUri(), null);
+
         try {
             return ReferenceFactory.makeGitLabReference(
                     reference.getHost(),
                     projectId,
                     branch,
                     URI.create(pathToFile).resolve(ref.getUri()).toString(),
-                    true,
                     ref.getInternal(),
                     accessTOKEN
             );
