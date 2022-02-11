@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.jetbrains.annotations.NotNull;
 import ru.fusionsoft.iu.dereferencer.builders.Builder;
-import ru.fusionsoft.iu.dereferencer.enums.RefType;
+import ru.fusionsoft.iu.dereferencer.enums.ReferenceType;
 import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;
 import ru.fusionsoft.iu.dereferencer.factories.ReferenceFactory;
 import ru.fusionsoft.iu.dereferencer.managers.impl.ManagerImpl;
@@ -60,7 +60,7 @@ public final class FragmentBuilder implements Builder {
             if (ptr.getKey().equals("$ref")){
                 ref = ReferenceFactory.makeReference(URI.create(ptr.getValue().asText()));
 
-                if (!RefType.isInternalPath(ref.getUri()) && !RefType.isInternalAnchor(ref.getUri())) {
+                if (!ReferenceType.isInternalPath(ref.getUri()) && !ReferenceType.isInternalAnchor(ref.getUri())) {
                     ref = instance.getRel(ref);
                     instance = (Reference) ref.clone();
                 }
@@ -104,9 +104,9 @@ public final class FragmentBuilder implements Builder {
             if (ptr.getKey().equals("$ref")){
                 String old = ptr.getValue().asText();
                 String ref = old + "_" + fileManager.getLastReference().getFileName().replace(".yaml", "").replace(".json", "");
-                switch (RefType.checkFragmentType(new URI(ref))){
-                    case INTERNAL_PATH : { searched = (ObjectNode)search(defs, old.replace("#/", "").replace("$defs/", "").split("/"));break; }
-                    case INTERNAL_ANCHOR : { searched = (ObjectNode)anchorSearch(defs, old.replace("#",""));break; }
+                switch (ReferenceType.checkFragmentType(new URI(ref))){
+                    case INTERNAL_PATH_REFERENCE:  { searched = (ObjectNode)search(defs, old.replace("#/", "").replace("$defs/", "").split("/"));break; }
+                    case INTERNAL_ANCHOR_REFERENCE:  { searched = (ObjectNode)anchorSearch(defs, old.replace("#",""));break; }
                     default : {continue;}
                 }
                 ((ObjectNode)fragment).replace("$ref", new TextNode(ref));
@@ -124,6 +124,7 @@ public final class FragmentBuilder implements Builder {
     @Override
     public JsonNode build() throws URISyntaxException, IOException, InvalidReferenceException, CloneNotSupportedException {
         JsonNode nonMerged = sourceFragments.get(refOnMainFragment);
+
         traceDefs(nonMerged, nonMerged);
         merge((ObjectNode) finalResult, (ObjectNode) nonMerged, refOnMainFragment);
         writeToFile(refOnMainFragment.getFileName());

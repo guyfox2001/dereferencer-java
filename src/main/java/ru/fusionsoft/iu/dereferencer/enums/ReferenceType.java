@@ -1,5 +1,7 @@
 package ru.fusionsoft.iu.dereferencer.enums;
 
+import ru.fusionsoft.iu.dereferencer.reference.internal.Reference;
+
 import java.net.URI;
 
 /*
@@ -10,26 +12,56 @@ import java.net.URI;
 * INTERNAL_FRAGMENT - это кейс когда $ref внутри схемы.
 * UNDEF_REF - неизвестный $ref/
 * */
-public enum RefType {
-    EXTERNAL_DOCUMENT_ANCHOR, EXTERNAL_DOCUMENT_PATH, EXTERNAL_DOCUMENT, LOCAL_DOCUMENT_ANCHOR, LOCAL_DOCUMENT, LOCAL_DOCUMENT_PATH, INTERNAL_ANCHOR, INTERNAL_PATH, UNDEF_REF;
+public enum ReferenceType {
+//    EXTERNAL_DOCUMENT_ANCHOR,
+//    EXTERNAL_DOCUMENT_PATH,
+//    EXTERNAL_DOCUMENT,
+//    LOCAL_DOCUMENT_ANCHOR,
+//    LOCAL_DOCUMENT,
+//    LOCAL_DOCUMENT_PATH,
+//    INTERNAL_ANCHOR,
+//    INTERNAL_PATH,
+//    UNDEF_REF;
 
-    public static RefType checkFragmentType(URI uri){
-        if (uri.getScheme() != null && uri.getScheme().length() != 1) {
-            if (uri.getFragment() != null ) {
-                if (uri.getFragment().contains("/")) return RefType.EXTERNAL_DOCUMENT_PATH;
-                return RefType.EXTERNAL_DOCUMENT_ANCHOR;
-            }
-            return RefType.EXTERNAL_DOCUMENT;
-        }
-        if (uri.getPath().equals("") && uri.getFragment() != null) {
-            if (uri.getFragment().contains("/")) return INTERNAL_PATH;
-            return RefType.INTERNAL_ANCHOR;
-        }
-        if (uri.getFragment() != null){
-            if (uri.getFragment().contains("/")) return LOCAL_DOCUMENT_PATH;
-            return RefType.LOCAL_DOCUMENT_ANCHOR;
-        }
-        return RefType.LOCAL_DOCUMENT;
+    GITHUB_REFERENCE,
+    GITLAB_REFERENCE,
+    LOCAL_REFERENCE,
+    INTERNAL_ANCHOR_REFERENCE,
+    INTERNAL_PATH_REFERENCE,
+    UNDEFINED_REFERENCE;
+
+
+//    public static ReferenceType checkFragmentType(URI uri){
+//        if (uri.getScheme() != null && uri.getScheme().length() != 1) {
+//            if (uri.getFragment() != null ) {
+//                if (uri.getFragment().contains("/")) return ReferenceType.EXTERNAL_DOCUMENT_PATH;
+//                return ReferenceType.EXTERNAL_DOCUMENT_ANCHOR;
+//            }
+//            return ReferenceType.EXTERNAL_DOCUMENT;
+//        }
+//        if (uri.getPath().equals("") && uri.getFragment() != null) {
+//            if (uri.getFragment().contains("/")) return INTERNAL_PATH;
+//            return ReferenceType.INTERNAL_ANCHOR;
+//        }
+//        if (uri.getFragment() != null){
+//            if (uri.getFragment().contains("/")) return LOCAL_DOCUMENT_PATH;
+//            return ReferenceType.LOCAL_DOCUMENT_ANCHOR;
+//        }
+//        return ReferenceType.LOCAL_DOCUMENT;
+//    }
+
+    public static ReferenceType checkFragmentType(URI uri){
+        if (isGitHub(uri)) return GITHUB_REFERENCE;
+
+        if(isGitLab(uri)) return GITLAB_REFERENCE;
+
+        if(isLocal(uri)) return  LOCAL_REFERENCE;
+
+        if(isInternalAnchor(uri)) return  INTERNAL_ANCHOR_REFERENCE;
+
+        if(isInternalPath(uri)) return INTERNAL_PATH_REFERENCE;
+
+        return UNDEFINED_REFERENCE;
     }
 
     public static boolean isLocal(URI expecting){
@@ -37,28 +69,16 @@ public enum RefType {
         return false;
     }
 
-    public static boolean isLocalPath(URI expecting){
-        if (isLocal(expecting) && expecting.getFragment() != null && expecting.getFragment().contains("/")) return true;
-        return false;
-    }
 
-    public static boolean isLocalAnchor(URI expecting){
-        if (isLocal(expecting) && expecting.getFragment() != null && !expecting.getFragment().contains("/")) return true;
-        return false;
-    }
 
     public static boolean isExternal(URI expecting){
         if (expecting.getScheme()!= null && expecting.getScheme().length() != 1) return true;
         return false;
     }
 
-    public static boolean isExternalPath(URI expecting){
-        if (isExternal(expecting) && hasPath(expecting)) return true;
-        return false;
-    }
 
     public static boolean isGitHub(URI expecting){
-        if (!expecting.getHost().equals("raw.githubusercontent.com")) return false;
+        if (!expecting.getHost().contains("github")) return false;
         return true;
     }
 
@@ -67,8 +87,6 @@ public enum RefType {
         return true;
     }
 
-
-    /*public static boolean isExternalAnchor(URI expecting)*/
 
     public static  boolean isInternalPath(URI expecting){
         if (isExternal(expecting) || isLocal(expecting) || !hasPath(expecting)) return false;

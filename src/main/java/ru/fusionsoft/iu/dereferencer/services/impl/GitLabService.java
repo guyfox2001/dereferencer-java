@@ -22,10 +22,14 @@ public class GitLabService implements GitService {
 
         GitLabReference targetCast = (GitLabReference) target;
         OkHttpClient client = new OkHttpClient();
+
         Request request = new Request.Builder()
-                .addHeader("PRIVATE-TOKEN", targetCast.getAccessTOKEN())
-                .url(targetCast.getUri().toString())
+                .url(targetCast.getUri().toURL())
                 .build();
+        if(target.getAccessTOKEN() != null && !target.getAccessTOKEN().equals("") ){
+            new Request.Builder(request).addHeader("PRIVATE-TOKEN", "token " + targetCast.getAccessTOKEN());
+        }
+
         Response response = client.newCall(request).execute();
 
         if (response.code() == 404) {
@@ -34,9 +38,9 @@ public class GitLabService implements GitService {
                     targetCast.getProjectId() + "\npath to file - " + targetCast.getPathToFile() + "\nTOKEN - " +
                     targetCast.getAccessTOKEN() + "\nmessage error: " + response.message());
         }
-        //TODO: может быть не только .yaml
-        JsonNode jsonNode = MapperUtil.getMapperInstance(new File(".yaml")).readTree(response.body().string());
-        MapperUtil.getMapperInstance(new File(".yaml")).writeValue(new File(ManagerImpl.getDownloadDirectory() + "/" + target.getHashFileName()) , jsonNode);
+
+        JsonNode jsonNode = MapperUtil.getMapperInstance(target).readTree(response.body().string());
+        MapperUtil.getMapperInstance(target).writeValue(new File(ManagerImpl.getDownloadDirectory() + "/" + target.getHashFileName()) , jsonNode);
         return jsonNode;
     }
 }

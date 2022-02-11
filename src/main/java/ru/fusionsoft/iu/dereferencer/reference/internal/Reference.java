@@ -1,6 +1,6 @@
 package ru.fusionsoft.iu.dereferencer.reference.internal;
 
-import ru.fusionsoft.iu.dereferencer.enums.RefType;
+import ru.fusionsoft.iu.dereferencer.enums.ReferenceType;
 import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;
 
 import java.net.URI;
@@ -16,9 +16,9 @@ public abstract class Reference implements Cloneable{
     public Reference(URI source) throws InvalidReferenceException {
         this.reference = source;
         _parceUri(source);
-        if(RefType.hasPath(source))
+        if(ReferenceType.hasPath(source))
             jsonRelPointerPath = source.getFragment();
-        if(RefType.hasAnchor(source))
+        if(ReferenceType.hasAnchor(source))
             anchor = source.getFragment();
     }
 

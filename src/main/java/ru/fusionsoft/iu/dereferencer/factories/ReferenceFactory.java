@@ -1,6 +1,6 @@
 package ru.fusionsoft.iu.dereferencer.factories;
 
-import ru.fusionsoft.iu.dereferencer.enums.RefType;
+import ru.fusionsoft.iu.dereferencer.enums.ReferenceType;
 import ru.fusionsoft.iu.dereferencer.exceptions.InvalidReferenceException;
 import ru.fusionsoft.iu.dereferencer.reference.external.GitHubReference;
 import ru.fusionsoft.iu.dereferencer.reference.external.GitLabReference;
@@ -57,23 +57,23 @@ public class ReferenceFactory {
     }
 
     public static Reference makeReference(URI source) throws InvalidReferenceException {
-        if (RefType.isLocal(source) || RefType.isInternalPath(source) || RefType.isInternalAnchor(source)) return new LocalReference(source);
-        if (RefType.isExternal(source)){
-            if (RefType.isGitHub(source)) return new GitHubReference(source, "");
-            if  (RefType.isGitLab(source)) return new GitLabReference(source, "");
+        if (ReferenceType.isLocal(source) || ReferenceType.isInternalPath(source) || ReferenceType.isInternalAnchor(source)) return new LocalReference(source);
+        if (ReferenceType.isExternal(source)){
+            if (ReferenceType.isGitHub(source)) return new GitHubReference(source, "");
+            if  (ReferenceType.isGitLab(source)) return new GitLabReference(source, "");
         }
         return null;
     }
 
     public static Reference makeReference(URI source, String TOKEN) throws InvalidReferenceException {
 
-        if (RefType.isGitHub(source)){
+        if (ReferenceType.isGitHub(source)){
             GitHubReference ghr  = new GitHubReference(source, TOKEN);
             if (TOKEN == null || TOKEN.equals(""))
                 ghr.setAccessTOKEN(GitTokensUtill.getGitTokensInstance().get(ghr.getUser()));
             return ghr;
         }
-        if (RefType.isGitLab(source)){
+        if (ReferenceType.isGitLab(source)){
             GitLabReference glr = new GitLabReference(source, TOKEN);
             if (TOKEN == null || TOKEN.equals(""))
                 glr.setAccessTOKEN(GitTokensUtill.getGitTokensInstance().get(glr.getProjectId().toString()));

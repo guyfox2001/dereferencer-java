@@ -41,8 +41,8 @@ public class GitHubService implements GitService {
                     targetCast.getAccessTOKEN());
         }
         //TODO: может быть не только .yaml
-        JsonNode jsonNode = MapperUtil.getMapperInstance(new File(".yaml")).readTree(response.body().string());
-        MapperUtil.getMapperInstance(new File(".yaml")).writeValue(new File(ManagerImpl.getDownloadDirectory() + "/" + target.getHashFileName()) , jsonNode);
+        JsonNode jsonNode = MapperUtil.getMapperInstance(target).readTree(response.body().string());
+        MapperUtil.getMapperInstance(target).writeValue(new File(ManagerImpl.getDownloadDirectory() + "/" + target.getHashFileName()) , jsonNode);
         return jsonNode;
     }
 
