@@ -27,7 +27,7 @@ public class GitLabService implements GitService {
                 .url(targetCast.getUri().toURL())
                 .build();
         if(target.getAccessTOKEN() != null && !target.getAccessTOKEN().equals("") ){
-            new Request.Builder(request).addHeader("PRIVATE-TOKEN", "token " + targetCast.getAccessTOKEN());
+            request =  new Request.Builder(request).addHeader("PRIVATE-TOKEN", targetCast.getAccessTOKEN()).build();
         }
 
         Response response = client.newCall(request).execute();

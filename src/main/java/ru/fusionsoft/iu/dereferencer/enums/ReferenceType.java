@@ -78,12 +78,12 @@ public enum ReferenceType {
 
 
     public static boolean isGitHub(URI expecting){
-        if (!expecting.getHost().contains("github")) return false;
+        if (expecting.getHost() == null || !expecting.getHost().contains("github")) return false;
         return true;
     }
 
     public static boolean isGitLab(URI expecting){
-        if (!expecting.getHost().contains("gitlab")) return false;
+        if (expecting.getHost() == null || !expecting.getHost().contains("gitlab")) return false;
         return true;
     }
 

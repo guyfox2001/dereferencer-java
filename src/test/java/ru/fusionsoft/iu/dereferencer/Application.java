@@ -14,7 +14,7 @@ public class Application {
     public static void main(String[] args) throws InvalidReferenceException, IOException, URISyntaxException, CloneNotSupportedException {
 
 
-        GitTokensUtill.getGitTokensInstance().put("guyfox2001", "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");
+        GitTokensUtill.getGitTokensInstance().put("guyfox2001", "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");
         GitTokensUtill.getGitTokensInstance().put("27", "MJ8hcszC654epjgXs_4i");
 //        try {
 //            Dereferencer.getResolve("https://raw.githubusercontent.com/guyfox2001/dataHolder/main/Nomenclature.yaml");
@@ -36,6 +36,9 @@ public class Application {
                 null));
 //        Dereferencer.getResolve(new GitLabReference(
 //                URI.create("https://gitlab.fusionsoft.ru/api/v4/projects/27/repository/files/iuData%2fSample-univ%2fNomenclature%2eyaml/raw?ref=master"),
+//                "MJ8hcszC654epjgXs_4i"));
+//        Dereferencer.getResolve(new GitLabReference(
+//                URI.create("https://gitlab.fusionsoft.ru/api/v4/projects/27/repository/files/iuData%2fSample-univ%2fAggregate%2eyaml/raw?ref=master"),
 //                "MJ8hcszC654epjgXs_4i"));
 //        Dereferencer.getResolve(new LocalReference(URI.create("iuData/Sample-univ/Nomenclature.yaml")));
 //        GitService gitService = new GitHubService();

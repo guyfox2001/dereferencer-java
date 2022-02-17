@@ -29,7 +29,7 @@ public class GitHubService implements GitService {
                 .url(targetCast.getUri().toURL())
                 .build();
         if(target.getAccessTOKEN() != null && !target.getAccessTOKEN().equals("") ){
-            new Request.Builder(request).addHeader("Authorization", "token " + targetCast.getAccessTOKEN());
+            request = new Request.Builder(request).addHeader("Authorization", "token " + targetCast.getAccessTOKEN()).build();
         }
 
         Response response = client.newCall(request).execute();

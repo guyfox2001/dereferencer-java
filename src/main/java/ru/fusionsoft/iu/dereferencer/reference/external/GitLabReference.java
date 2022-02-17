@@ -20,7 +20,7 @@ public class GitLabReference extends GitReference {
     }
 
     @Override
-    protected void _parceUri(URI source) throws InvalidReferenceException {
+    protected void _parseUri(URI source) throws InvalidReferenceException {
 
         if (source.getQuery() == null) throw new InvalidReferenceException("Wrong query params.");
 

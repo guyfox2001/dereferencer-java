@@ -15,14 +15,14 @@ public abstract class Reference implements Cloneable{
 
     public Reference(URI source) throws InvalidReferenceException {
         this.reference = source;
-        _parceUri(source);
+        _parseUri(source);
         if(ReferenceType.hasPath(source))
             jsonRelPointerPath = source.getFragment();
         if(ReferenceType.hasAnchor(source))
             anchor = source.getFragment();
     }
 
-    protected void _parceUri(URI source) throws InvalidReferenceException {
+    protected void _parseUri(URI source) throws InvalidReferenceException {
 
     }
 

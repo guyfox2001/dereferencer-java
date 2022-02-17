@@ -22,7 +22,7 @@ public class GitHubReference extends GitReference {
     }
 
     @Override
-    protected void _parceUri(URI source) throws InvalidReferenceException {
+    protected void _parseUri(URI source) throws InvalidReferenceException {
         String[] splited =  source.getPath().split("/");
 
         if (splited.length < 5)
@@ -31,6 +31,8 @@ public class GitHubReference extends GitReference {
         user = splited[1];
         repo = splited[2];
         branch = splited[3];
+
+        if(pathToFile == null) pathToFile = "";
 
         for (int i= 4; ; i++){
             if (i + 1 == splited.length) {

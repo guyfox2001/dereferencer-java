@@ -13,7 +13,7 @@ public class LocalReference extends Reference {
     }
 
     @Override
-    protected void _parceUri(URI source) throws InvalidReferenceException {
+    protected void _parseUri(URI source) throws InvalidReferenceException {
         String pth = reference.getPath();
         fileName = pth.substring(pth.lastIndexOf("/")+1);
     }
