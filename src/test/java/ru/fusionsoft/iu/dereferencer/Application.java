@@ -14,7 +14,7 @@ public class Application {
     public static void main(String[] args) throws InvalidReferenceException, IOException, URISyntaxException, CloneNotSupportedException {
 
 
-        GitTokensUtill.getGitTokensInstance().put("guyfox2001", "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");
+        GitTokensUtill.getGitTokensInstance().put("guyfox2001", "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");
         GitTokensUtill.getGitTokensInstance().put("27", "MJ8hcszC654epjgXs_4i");
 //        try {
 //            Dereferencer.getResolve("https://raw.githubusercontent.com/guyfox2001/dataHolder/main/Nomenclature.yaml");
@@ -28,12 +28,12 @@ public class Application {
 //        }
 //        Dereferencer.getResolve("https://gitlab.fusionsoft.ru/fusionsoft-ru/iu/info-universe/-/raw/master/iuData/Sample-univ/Nomenclature.yaml");
 //        Dereferencer.getResolve(ReferenceFactory.makeReference(URI.create("W://dereferencer/iuData/Sample-univ/Nomenclature.yaml")));
-//        Dereferencer.getResolve(new GitHubReference(
-//                URI.create("https://raw.githubusercontent.com/guyfox2001/dataHolder/main/Nomenclature.yaml"),
-//                "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"));
         Dereferencer.getResolve(new GitHubReference(
-                URI.create("https://raw.githubusercontent.com/guyfox2001/dataHolder/main/absolute-links/Nomenclature.yaml"),
-                null));
+                URI.create("https://raw.githubusercontent.com/guyfox2001/dataHolder/main/fusionsoft-data/Nomenclature.yaml"),
+                "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"));
+//        Dereferencer.getResolve(new GitHubReference(
+//                URI.create("https://raw.githubusercontent.com/guyfox2001/dataHolder/main/absolute-links/Nomenclature.yaml"),
+//                null));
 //        Dereferencer.getResolve(new GitLabReference(
 //                URI.create("https://gitlab.fusionsoft.ru/api/v4/projects/27/repository/files/iuData%2fSample-univ%2fNomenclature%2eyaml/raw?ref=master"),
 //                "MJ8hcszC654epjgXs_4i"));

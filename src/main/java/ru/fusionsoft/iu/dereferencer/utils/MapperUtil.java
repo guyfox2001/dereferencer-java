@@ -1,6 +1,7 @@
 package ru.fusionsoft.iu.dereferencer.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import ru.fusionsoft.iu.dereferencer.enums.FileFormat;
@@ -19,6 +20,7 @@ public class MapperUtil {
     }
     private static void initJson(){
         jsonMapperInstance = new JsonMapper();
+        jsonMapperInstance.enable(SerializationFeature.INDENT_OUTPUT);
     }
     private static void init() { mapperInstance = new ObjectMapper(); }
 
